@@ -282,6 +282,22 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             'Start drawing rectangles',
             enabled=False,
         )
+        createParallelogramMode = action(
+            'Create Parallelogram',
+            lambda: self.toggleDrawMode(False, createMode='parallelogram'),
+            shortcuts['create_parallelogram'],
+            'objects',
+            'Start drawing parallelograms',
+            enabled=False,
+        )
+        createRotRectangleMode = action(
+            'Create RotRectangle',
+            lambda: self.toggleDrawMode(False, createMode='rotrectangle'),
+            shortcuts['create_rotrectangle'],
+            'objects',
+            'Start drawing parallelograms',
+            enabled=False,
+        )
         createCircleMode = action(
             'Create Circle',
             lambda: self.toggleDrawMode(False, createMode='circle'),
@@ -426,6 +442,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             createMode=createMode, editMode=editMode,
             createRectangleMode=createRectangleMode,
             createCircleMode=createCircleMode,
+            createParallelogramMode=createParallelogramMode,
+            createRotRectangleMode=createRotRectangleMode,
             createLineMode=createLineMode,
             createPointMode=createPointMode,
             createLineStripMode=createLineStripMode,
@@ -442,6 +460,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             menu=(
                 createMode,
                 createRectangleMode,
+                createParallelogramMode,
+                createRotRectangleMode,
                 createCircleMode,
                 createLineMode,
                 createPointMode,
@@ -460,6 +480,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 close,
                 createMode,
                 createRectangleMode,
+                createParallelogramMode,
+                createRotRectangleMode,
                 createCircleMode,
                 createLineMode,
                 createPointMode,
@@ -620,6 +642,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         actions = (
             self.actions.createMode,
             self.actions.createRectangleMode,
+            self.actions.createParallelogramMode,
+            self.actions.createRotRectangleMode,
             self.actions.createCircleMode,
             self.actions.createLineMode,
             self.actions.createPointMode,
@@ -648,6 +672,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.actions.save.setEnabled(False)
         self.actions.createMode.setEnabled(True)
         self.actions.createRectangleMode.setEnabled(True)
+        self.actions.createParallelogramMode.setEnabled(True)
+        self.actions.createRotRectangleMode.setEnabled(True)
         self.actions.createCircleMode.setEnabled(True)
         self.actions.createLineMode.setEnabled(True)
         self.actions.createPointMode.setEnabled(True)
@@ -723,6 +749,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if edit:
             self.actions.createMode.setEnabled(True)
             self.actions.createRectangleMode.setEnabled(True)
+            self.actions.createParallelogramMode.setEnabled(True)
+            self.actions.createRotRectangleMode.setEnabled(True)
             self.actions.createCircleMode.setEnabled(True)
             self.actions.createLineMode.setEnabled(True)
             self.actions.createPointMode.setEnabled(True)
@@ -731,6 +759,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             if createMode == 'polygon':
                 self.actions.createMode.setEnabled(False)
                 self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createParallelogramMode.setEnabled(True)
+                self.actions.createRotRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
@@ -738,6 +768,26 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             elif createMode == 'rectangle':
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(False)
+                self.actions.createParallelogramMode.setEnabled(True)
+                self.actions.createRotRectangleMode.setEnabled(True)
+                self.actions.createCircleMode.setEnabled(True)
+                self.actions.createLineMode.setEnabled(True)
+                self.actions.createPointMode.setEnabled(True)
+                self.actions.createLineStripMode.setEnabled(True)
+            elif createMode == 'parallelogram':
+                self.actions.createMode.setEnabled(True)
+                self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createParallelogramMode.setEnabled(False)
+                self.actions.createRotRectangleMode.setEnabled(True)
+                self.actions.createCircleMode.setEnabled(True)
+                self.actions.createLineMode.setEnabled(True)
+                self.actions.createPointMode.setEnabled(True)
+                self.actions.createLineStripMode.setEnabled(True)
+            elif createMode == 'rotrectangle':
+                self.actions.createMode.setEnabled(True)
+                self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createParallelogramMode.setEnabled(True)
+                self.actions.createRotRectangleMode.setEnabled(False)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
@@ -745,6 +795,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             elif createMode == 'line':
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createParallelogramMode.setEnabled(True)
+                self.actions.createRotRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(False)
                 self.actions.createPointMode.setEnabled(True)
@@ -752,6 +804,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             elif createMode == 'point':
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createParallelogramMode.setEnabled(True)
+                self.actions.createRotRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(False)
@@ -759,6 +813,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             elif createMode == "circle":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createParallelogramMode.setEnabled(True)
+                self.actions.createRotRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(False)
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
@@ -766,6 +822,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             elif createMode == "linestrip":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createParallelogramMode.setEnabled(True)
+                self.actions.createRotRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)

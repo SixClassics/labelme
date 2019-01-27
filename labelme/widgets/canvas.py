@@ -84,7 +84,7 @@ class Canvas(QtWidgets.QWidget):
 
     @createMode.setter
     def createMode(self, value):
-        if value not in ['polygon', 'rectangle', 'circle',
+        if value not in ['polygon', 'rectangle', 'parallelogram', 'circle', 'rotrectangle',
            'line', 'point', 'linestrip']:
             raise ValueError('Unsupported createMode: %s' % value)
         self._createMode = value
@@ -178,6 +178,16 @@ class Canvas(QtWidgets.QWidget):
             if self.createMode in ['polygon', 'linestrip']:
                 self.line[0] = self.current[-1]
                 self.line[1] = pos
+            elif self.createMode == 'parallelogram':
+                if len(self.current) == 1:
+                    self.current.addPoint(pos)
+                else:
+                    self.current[-1] = pos
+            elif self.createMode == 'rotrectangle':
+                if len(self.current) == 1:
+                    self.current.addPoint(pos)
+                else:
+                    self.current[-1] = pos
             elif self.createMode == 'rectangle':
                 self.line.points = [self.current[0], pos]
                 self.line.close()
@@ -293,6 +303,18 @@ class Canvas(QtWidgets.QWidget):
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
                         self.finalise()
+                    elif self.createMode == 'parallelogram':
+                        if len(self.current.points) >= 3:
+                            self.finalise()
+                        if self.current:
+                            if len(self.current) == 2:
+                                self.current.addPoint(self.current.points[-1])
+                    elif self.createMode == 'rotrectangle':
+                        if len(self.current.points) >= 3:
+                            self.finalise()
+                        if self.current:
+                            if len(self.current) == 2:
+                                self.current.addPoint(self.current.points[-1])
                     elif self.createMode == 'linestrip':
                         self.current.addPoint(self.line[1])
                         self.line[0] = self.current[-1]
@@ -642,6 +664,7 @@ class Canvas(QtWidgets.QWidget):
     def setLastLabel(self, text):
         assert text
         self.shapes[-1].label = text
+        print(self.shapes)
         self.shapesBackups.pop()
         self.storeShapes()
         return self.shapes[-1]
@@ -654,6 +677,8 @@ class Canvas(QtWidgets.QWidget):
             self.line.points = [self.current[-1], self.current[0]]
         elif self.createMode in ['rectangle', 'line', 'circle']:
             self.current.points = self.current.points[0:1]
+        elif self.createMode == 'parallelogram':
+            self.current.points = self.current.points[0:2]
         elif self.createMode == 'point':
             self.current = None
         self.drawingPolygon.emit(True)

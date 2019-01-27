@@ -61,6 +61,8 @@ shortcuts:
   add_point: Ctrl+Shift+P
   create_polygon: Ctrl+N
   create_rectangle: Ctrl+R
+  create_parallelogram: null
+  create_rotrectangle: null
   create_circle: null
   create_line: null
   create_point: null

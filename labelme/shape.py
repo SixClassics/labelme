@@ -68,7 +68,7 @@ class Shape(object):
     def shape_type(self, value):
         if value is None:
             value = 'polygon'
-        if value not in ['polygon', 'rectangle', 'point',
+        if value not in ['polygon', 'rectangle', 'point', 'parallelogram', 'rotrectangle',
            'line', 'circle', 'linestrip']:
             raise ValueError('Unexpected shape_type: {}'.format(value))
         self._shape_type = value
@@ -118,6 +118,43 @@ class Shape(object):
                 if len(self.points) == 2:
                     rectangle = self.getRectFromLine(*self.points)
                     line_path.addRect(rectangle)
+                for i in range(len(self.points)):
+                    self.drawVertex(vrtx_path, i)
+            elif self.shape_type == 'parallelogram':
+                line_path.moveTo(self.points[0])
+                if len(self.points) == 2:
+                    line_path.lineTo(self.points[1])
+                elif len(self.points) >= 3:
+                    line_path.lineTo(self.points[1])
+                    point_temp = self.points[0]+self.points[2]-self.points[1]
+                    line_path.lineTo(self.points[2])
+                    line_path.lineTo(point_temp)
+                    line_path.lineTo(self.points[0])
+                for i in range(len(self.points)):
+                    self.drawVertex(vrtx_path, i)
+            elif self.shape_type == 'rotrectangle':
+                line_path.moveTo(self.points[0])
+                if len(self.points) == 2:
+                    line_path.lineTo(self.points[1])
+                elif len(self.points) >= 3:
+                    point3 = self.points[0]+self.points[1]-self.points[1]
+                    point4 = self.points[1]+self.points[0]-self.points[0]
+                    deltay = (self.points[1].y()-self.points[0].y())
+                    if abs(deltay) <= 1:
+                        point3.setX(self.points[0].x())
+                        point3.setY(self.points[2].y())
+                        point4.setX(self.points[1].x())
+                        point4.setY(self.points[2].y())
+                    else:
+                        k = deltay/(self.points[1].x()-self.points[0].x())
+                        deltay = k*(self.points[0].x()-self.points[2].x())+(self.points[2].y()-self.points[0].y())
+                        point3.setY((self.points[0].y()+deltay/(1+k*k)))
+                        point3.setX((self.points[0].x()-deltay*k/(1+k*k)))
+                        point4 = self.points[1]+point3-self.points[0]
+                    line_path.lineTo(self.points[1])
+                    line_path.lineTo(point4)
+                    line_path.lineTo(point3)
+                    line_path.lineTo(self.points[0])
                 for i in range(len(self.points)):
                     self.drawVertex(vrtx_path, i)
             elif self.shape_type == "circle":
